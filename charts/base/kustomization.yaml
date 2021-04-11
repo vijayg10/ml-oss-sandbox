@@ -1,0 +1,2 @@
+resources:
+    - ./ss_mysql.yaml

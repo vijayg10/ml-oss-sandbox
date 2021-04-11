@@ -8,7 +8,7 @@
 #   labels:
 #     type: local
 # spec:
-#   storageClassName: awsgp2
+#   storageClassName: local-path
 #   capacity:
 #     storage: 10Gi
 #   accessModes:
@@ -22,7 +22,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: mysql-cl-pv-claim
 spec:
-  storageClassName: awsgp2
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   resources:
@@ -84,7 +84,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: mysql-als-pv-claim
 spec:
-  storageClassName: awsgp2
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   resources:

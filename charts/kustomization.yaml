@@ -1,0 +1,6 @@
+resources:
+   - ./ingress_kong_admin.yaml
+   - ./ingress_kong_fspiop.yaml
+   - ./ingress_simulators.yaml
+   - ./ingress_ttk.yaml
+   - ./ingress_kong_thirdparty.yaml
