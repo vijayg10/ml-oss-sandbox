@@ -27,11 +27,12 @@ install-switch-local: .install-base
 install-ingress:
 	helm upgrade --install --namespace ${NAMESPACE} kong kong/kong -f ./config/kong_values.yaml
 	# TODO: figure out a better way to apply multi files
-	kubectl apply -f ./charts/ingress_kong_admin.yaml
-	kubectl apply -f ./charts/ingress_kong_fspiop.yaml
-	kubectl apply -f ./charts/ingress_simulators.yaml
-	kubectl apply -f ./charts/ingress_ttk.yaml
-	kubectl apply -f ./charts/ingress_kong_thirdparty.yaml
+	# kubectl apply -f ./charts/ingress_kong_admin.yaml
+	# kubectl apply -f ./charts/ingress_kong_fspiop.yaml
+	# kubectl apply -f ./charts/ingress_simulators.yaml
+	# kubectl apply -f ./charts/ingress_ttk.yaml
+	# kubectl apply -f ./charts/ingress_kong_thirdparty.yaml
+	kustomize build ./charts | kubectl apply -f -
 
 install-dev-portal:
 	kubectl apply -f ./config/dev_portal.yaml
