@@ -12,15 +12,13 @@ const config: AxiosRequestConfig = {
 const baseUrl = 'sandbox.mojaloop.io'
 
 
-describe.skip('request to pay', () => {
-
-
+describe('request to pay', () => {
   it('issues a requestToPay', async () => {
     // Arrange
-    const uriRtp = `http://jcash-sdk-scheme-adapter-outbound.${baseUrl}/requestToPayTransfer`
-    const requestToPayTransactionId = v4()
+    const uriRtp = `http://jcash-sdk-scheme-adapter-outbound.${baseUrl}/requestToPay`
+    const homeTransactionId = v4()
     const requestToPayInit = {
-      requestToPayTransactionId,
+      homeTransactionId,
       "from": {
         "idType": "MSISDN",
         "idValue": "329294234",
@@ -44,32 +42,43 @@ describe.skip('request to pay', () => {
       },
     }
     const expectedInitResponse = expect.objectContaining({
-      requestToPayTransactionId,
-      from: { idType: 'MSISDN', idValue: '949309489' },
+      homeTransactionId,
+      from: expect.objectContaining({ 
+        idType: 'MSISDN', 
+        idValue: '329294234',
+        // TODO: for some reason the sdk-scheme-adapter fills this in
+        // as `jcash`... 
+        // fspId: 'skybank',
+      }),
       to: {
         idType: 'MSISDN',
-        idValue: '329294234',
-        fspId: 'skybank',
-        firstName: 'Daniel',
-        middleName: 'B',
-        lastName: 'Rizal',
+        idValue: '949309489',
+        fspId: 'jcash',
+        firstName: 'Rnell',
+        middleName: 'A',
+        lastName: 'Durano',
         dateOfBirth: '1970-01-01'
       },
       amountType: 'RECEIVE',
       currency: 'PHP',
       amount: '1000',
-      transactionType: 'TRANSFER',
-      note: 'Note sent to Payee.',
-      transferId: expect.stringMatching('.*'),
-      currentState: 'WAITING_FOR_PARTY_ACCEPTANCE',
-      initiatedTimestamp: expect.stringMatching('.*')
+      initiator: 'PAYEE',
+      initiatorType: 'CONSUMER',
+      scenario: {
+        scenario: 'DEPOSIT',
+        subScenario: 'LOCALLY_DEFINED_SUBSCENARIO',
+        initiator: 'PAYEE',
+        initiatorType: 'CONSUMER'
+      },
+      transactionRequestId: expect.stringMatching('.*'),
+      currentState: 'WAITING_FOR_PARTY_ACCEPTANCE'
     })
 
     // Act
+    // Payee FSP sends init, which internally calls `POST /transactionRequest` in FSPIOP API
     const initRtpResponse = (await axios.post(uriRtp, requestToPayInit, config)).data
      
     // Assert
-    console.log(initRtpResponse)
     expect(initRtpResponse).toEqual(expectedInitResponse)
     
     const transactionRequestId = initRtpResponse.transactionRequestId
